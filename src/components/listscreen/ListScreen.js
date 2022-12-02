@@ -1,22 +1,42 @@
 import React from 'react';
-import {FlatList, Text, View, Image} from 'react-native';
+import {FlatList, Text, View, Image, Pressable} from 'react-native';
 import styles from './ListScreen.style';
 
-const ListScreen = ({items}) => {
+const ListScreen = ({items, changeIspressed}) => {
+  const handleCurrentTask = item => {
+    changeIspressed(item);
+  };
+
   const renderTodoItems = ({item}) =>
     item !== 'empty' ? (
-      <View style={[styles.todoContainer, {backgroundColor: item.bgColor}]}>
-        <Text style={styles.todoText}>{item.title}</Text>
-        <View style={styles.todoCloseContainer}>
-          <Image
-            style={styles.closePng}
-            source={require('../../images/cancel.png')}
-          />
+      <Pressable onPress={() => handleCurrentTask(item)}>
+        <View
+          style={
+            item.isPressed === false
+              ? [styles.todoContainer, {backgroundColor: item.bgColor}]
+              : styles.pressedStyle
+          }>
+          <Text
+            style={
+              item.isPressed === false ? styles.todoText : styles.pressedText
+            }>
+            {item.title}
+          </Text>
+          <View style={styles.todoCloseContainer}>
+            <Image
+              style={styles.closePng}
+              source={
+                item.isPressed === false
+                  ? require('../../images/cancel.png')
+                  : require('../../images/canceldark.png')
+              }
+            />
+          </View>
         </View>
-      </View>
+      </Pressable>
     ) : (
       <View style={styles.emptyTextContainer}>
-        <Text style={styles.emptyText}>Hiç bir tanımlanmış görev yok!</Text>
+        <Text style={styles.emptyText}>Henüz tanımlanmış bir görev yok!</Text>
       </View>
     );
 

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {SafeAreaView, StyleSheet, Text, View, Image} from 'react-native';
+import {SafeAreaView, StyleSheet, Text, View, Image, Alert} from 'react-native';
 import SearchBar from './src/components/searchbar';
 import AddTodo from './src/components/addtodo';
 import ListScreen from './src/components/listscreen';
@@ -8,10 +8,35 @@ const App = () => {
   const [todoList, setTodoList] = useState([]);
   const [taskListDB, setTaskListDB] = useState([]);
 
+  useEffect(() => {
+    Alert.alert('Uyarı', 'Henüz tamamlanmadı,eksiklikleri var!!!');
+  }, []);
+
+  //#region Ekrana sadece tamamlanmamış görevler gelsin...
+  useEffect(() => {
+    setTaskListDB(todoList.filter(todo => todo.isPressed === false));
+  }, [todoList]);
+  //#endregion
+
+  //#region Yeni görev ekleme...
   const addNewTask = (id, title, bgColor, isPressed) => {
     setTodoList([...todoList, {id, title, bgColor, isPressed}]);
   };
+  //#endregion
 
+  // Bu kısım arızalı....???
+  const changeIspressed = item => {
+    const filteredTaskList = todoList.filter(todo => {
+      if (todo.id === item.id) {
+        todo.isPressed = true;
+      }
+      return todo.isPressed;
+    });
+    setTodoList(filteredTaskList);
+    console.log(filteredTaskList);
+  };
+
+  //#region Görev arama işlemi...
   const searchTasks = title => {
     const filteredList = todoList.filter(todo => {
       const searchedText = title.toLowerCase();
@@ -20,10 +45,7 @@ const App = () => {
     });
     setTaskListDB(filteredList);
   };
-
-  useEffect(() => {
-    setTaskListDB(todoList);
-  }, [todoList]);
+  //#endregion
 
   return (
     <SafeAreaView style={styles.container}>
@@ -45,7 +67,7 @@ const App = () => {
 
       <View style={styles.listContainer}>
         {/* FlatList'e gider...  */}
-        <ListScreen items={taskListDB} />
+        <ListScreen items={taskListDB} changeIspressed={changeIspressed} />
       </View>
 
       <View style={styles.footerContainer}>
@@ -55,6 +77,7 @@ const App = () => {
   );
 };
 
+//#region  App sayfası sitilleri...
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'rgba(44, 44, 84,1.0)',
@@ -113,5 +136,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+//#endregion
 
 export default App;

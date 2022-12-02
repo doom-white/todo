@@ -46,4 +46,22 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
   },
+  pressedStyle: {
+    backgroundColor: '#636e72',
+    textDecorationLine: 'line-through',
+    flexDirection: 'row',
+    borderRadius: 5,
+    marginVertical: 5,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  pressedText: {
+    fontSize: 19,
+    fontWeight: 'bold',
+    color: '#2d3436',
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    textDecorationLine: 'line-through',
+  },
 });
