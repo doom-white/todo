@@ -1,10 +1,30 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {SafeAreaView, StyleSheet, Text, View, Image} from 'react-native';
 import SearchBar from './src/components/searchbar';
 import AddTodo from './src/components/addtodo';
 import ListScreen from './src/components/listscreen';
 
 const App = () => {
+  const [todoList, setTodoList] = useState([]);
+  const [taskListDB, setTaskListDB] = useState([]);
+
+  const addNewTask = (id, title, bgColor, isPressed) => {
+    setTodoList([...todoList, {id, title, bgColor, isPressed}]);
+  };
+
+  const searchTasks = title => {
+    const filteredList = todoList.filter(todo => {
+      const searchedText = title.toLowerCase();
+      const currentText = todo.title.toLowerCase();
+      return currentText.indexOf(searchedText) > -1;
+    });
+    setTaskListDB(filteredList);
+  };
+
+  useEffect(() => {
+    setTaskListDB(todoList);
+  }, [todoList]);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.mainHeaderContainer}>
@@ -15,19 +35,21 @@ const App = () => {
           />
           <View style={styles.infoContainer}>
             <Text style={styles.header}>Yapılacaklar Listesi</Text>
-            <Text style={styles.counter}>0</Text>
+            <Text style={styles.counter}>{taskListDB.length}</Text>
           </View>
         </View>
         <View style={styles.searchBarContainer}>
-          <SearchBar />
+          <SearchBar searchTasks={searchTasks} />
         </View>
       </View>
 
       <View style={styles.listContainer}>
-        <ListScreen />
+        {/* FlatList'e gider...  */}
+        <ListScreen items={taskListDB} />
       </View>
+
       <View style={styles.footerContainer}>
-        <AddTodo />
+        <AddTodo addNewTask={addNewTask} />
       </View>
     </SafeAreaView>
   );
